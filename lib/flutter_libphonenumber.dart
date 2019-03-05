@@ -6,14 +6,18 @@ class PhoneNumber {
   final int countryCode;
   final int nationalNumber;
   final String numberExtension;
+  final String formated;
+  final String aytf;
 
   PhoneNumber.fromMap(map)
     : this.countryCode = map['countryCode'],
       this.nationalNumber = map['nationalNumber'],
-      this.numberExtension = map['numberExtension'];
+      this.numberExtension = map['numberExtension'],
+      this.formated = map['formated'],
+      this.aytf = map['aytf'];
 }
 
-class FlutterLibPhoneNumber {
+class FlutterLibPhoneNumber { 
   static const MethodChannel _channel =
       const MethodChannel('com.vizmo.flutterlibphonenumber');
 
@@ -22,13 +26,14 @@ class FlutterLibPhoneNumber {
     return version;
   }
 
-  static Future<PhoneNumber> parse(String phoneNumber, {String defaultRegion = 'IN'}) async {
+  static Future<PhoneNumber> parse(String phoneNumber, {String defaultRegion = 'US'}) async {
     final args = {
       'phoneNumber': phoneNumber,
-      'defaultRegion': defaultRegion,
+      'defaultRegion': 'AR',
       'ignoreType': true
     };
     final phoneMap = await _channel.invokeMethod('parse', args);
+    print(phoneMap);
     return PhoneNumber.fromMap(phoneMap);
   }
 }

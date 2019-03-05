@@ -10,6 +10,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
+import android.util.Log
 
 
 class FlutterLibphonenumberPlugin(private val activity: Activity) : MethodCallHandler {
@@ -37,13 +38,25 @@ class FlutterLibphonenumberPlugin(private val activity: Activity) : MethodCallHa
 
       val defaultRegion = args["defaultRegion"] as? String ?: autoDetectCountry()
       //val ignoreType = args["ignoreType"] as? Boolean ?: true
+      Log.d("KYC360", "Region:" + defaultRegion)
 
       try {
+        val aytf = phoneNumberUtil.getAsYouTypeFormatter(defaultRegion)
         val parsedNumber = phoneNumberUtil.parse(phoneNumber, defaultRegion)
+        val formatedNumber = phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL)
+        var aytPhoneNumber = ""
+
+        for(c in phoneNumber?: ""){
+          aytPhoneNumber = aytf.inputDigit(c)
+          Log.d("KYC360", "aytf:" + aytPhoneNumber + " input:" + c);
+        }
+
         val phoneMap = hashMapOf<String, Any?>(
             "countryCode" to parsedNumber.countryCode,
             "nationalNumber" to parsedNumber.nationalNumber,
-            "numberExtension" to parsedNumber.extension
+            "numberExtension" to parsedNumber.extension,
+            "formated" to formatedNumber,
+            "aytf" to aytPhoneNumber
         )
         result.success(phoneMap)
       }catch (e: NumberParseException) {
@@ -71,7 +84,7 @@ class FlutterLibphonenumberPlugin(private val activity: Activity) : MethodCallHa
     country = detectLocaleCountry()
     if(country!= null) return country
 
-    return "IN"
+    return "US"
   }
 
   /**
