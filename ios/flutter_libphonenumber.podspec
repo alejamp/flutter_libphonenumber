@@ -18,6 +18,6 @@ Flutter plugin wrapper to Google&#x27;s libphonenumber
   
   s.dependency 'PhoneNumberKit', '~> 2.5'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
 end
 
